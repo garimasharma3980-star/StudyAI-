@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://garima-pixel.github.io/StudyAI-/sitemap.xml
