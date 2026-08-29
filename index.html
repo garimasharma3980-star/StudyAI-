@@ -3,71 +3,1014 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>StudyAI — Personalized Dashboard</title>
+<title>StudyAI — Your Personal AI Tutor</title>
+
 <style>
-*{box-sizing:border-box}body{margin:0;background:#06172f;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
-.wrap{max-width:900px;margin:auto;padding:22px 16px 45px}.card{background:linear-gradient(145deg,#0d203b,#091a31);border:1px solid #245082;border-radius:25px;padding:25px;box-shadow:0 18px 45px #0004}
-.brand{font-size:28px;font-weight:800}.muted{color:#98aac0}h1{font-size:clamp(34px,8vw,55px);line-height:1.05;margin:12px 0}h2{margin:8px 0}
-label{display:block;font-weight:700;margin:17px 0 8px}input,select{width:100%;padding:14px;border-radius:12px;border:1px solid #385777;background:#081a31;color:#fff;font-size:16px}
-.subjects{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.subject{border:1px solid #315477;border-radius:12px;padding:13px;background:#0a1d35}.subject input{width:auto;margin-right:8px}
-button{cursor:pointer}.primary{width:100%;margin-top:22px;padding:15px;border:0;border-radius:13px;background:linear-gradient(90deg,#3d8cff,#8b52ff);color:white;font-weight:800;font-size:16px}
-.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.reset{background:transparent;color:#a9c4e5;border:1px solid #315477;border-radius:10px;padding:9px 12px}
-.progress{height:13px;background:#172d48;border-radius:99px;overflow:hidden;margin:18px 0}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3d8cff,#9a50ff)}
-.task{display:flex;gap:14px;align-items:center;padding:17px 0;border-bottom:1px solid #17314f}.check{width:42px;height:42px;border-radius:50%;border:2px solid #315477;display:grid;place-items:center;flex:none;font-weight:900}.done .check{background:#2fd28b;border-color:#2fd28b;color:#06251a}.done .taskname{text-decoration:line-through;color:#8193aa}.taskname{font-size:18px;font-weight:800}.meta{color:#8ea1b8;margin-top:4px}.insight{margin-top:22px;padding:19px;border:1px solid #245c91;border-radius:18px;background:#0a2340}.insight b{color:#58a6ff}.hidden{display:none}.error{color:#ff9c9c;margin-top:10px}
-@media(max-width:520px){.subjects{grid-template-columns:1fr}.card{padding:20px}}
+*{box-sizing:border-box}
+
+body{
+  margin:0;
+  background:#06172f;
+  color:#fff;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;
+}
+
+button,input,select,textarea{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+.wrap{
+  max-width:950px;
+  margin:auto;
+  padding:18px 15px 50px;
+}
+
+.card{
+  background:linear-gradient(145deg,#0d203b,#091a31);
+  border:1px solid #245082;
+  border-radius:25px;
+  padding:24px;
+  box-shadow:0 18px 45px #0004;
+}
+
+.brand{
+  font-size:28px;
+  font-weight:850;
+}
+
+.muted{
+  color:#98aac0;
+}
+
+.hidden{
+  display:none!important;
+}
+
+/* SETUP */
+
+h1{
+  font-size:clamp(34px,8vw,55px);
+  line-height:1.05;
+  margin:12px 0;
+}
+
+label{
+  display:block;
+  font-weight:700;
+  margin:17px 0 8px;
+}
+
+input,select,textarea{
+  width:100%;
+  padding:14px;
+  border-radius:13px;
+  border:1px solid #385777;
+  background:#081a31;
+  color:#fff;
+  outline:none;
+}
+
+textarea{
+  min-height:90px;
+  resize:vertical;
+}
+
+input:focus,select:focus,textarea:focus{
+  border-color:#5b9cff;
+}
+
+.subjects{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+.subject{
+  border:1px solid #315477;
+  border-radius:13px;
+  padding:13px;
+  background:#0a1d35;
+}
+
+.subject input{
+  width:auto;
+  margin-right:8px;
+}
+
+.primary{
+  width:100%;
+  margin-top:22px;
+  padding:15px;
+  border:0;
+  border-radius:13px;
+  background:linear-gradient(90deg,#3d8cff,#8b52ff);
+  color:white;
+  font-weight:800;
+  font-size:16px;
+}
+
+.error{
+  color:#ff9c9c;
+  margin-top:10px;
+}
+
+/* TOP */
+
+.top{
+  display:flex;
+  justify-content:space-between;
+  gap:12px;
+  align-items:center;
+  margin-bottom:18px;
+}
+
+.nav{
+  display:flex;
+  gap:8px;
+  margin:15px 0;
+}
+
+.nav button{
+  flex:1;
+  padding:12px;
+  border-radius:12px;
+  border:1px solid #315477;
+  background:#0a1d35;
+  color:#b9cce2;
+  font-weight:700;
+}
+
+.nav button.active{
+  background:linear-gradient(90deg,#3d8cff,#8b52ff);
+  color:#fff;
+  border-color:transparent;
+}
+
+.reset{
+  background:transparent;
+  color:#a9c4e5;
+  border:1px solid #315477;
+  border-radius:10px;
+  padding:9px 12px;
+}
+
+/* DASHBOARD */
+
+.progress{
+  height:13px;
+  background:#172d48;
+  border-radius:99px;
+  overflow:hidden;
+  margin:18px 0;
+}
+
+.progress i{
+  display:block;
+  height:100%;
+  width:0;
+  background:linear-gradient(90deg,#3d8cff,#9a50ff);
+}
+
+.task{
+  display:flex;
+  gap:14px;
+  align-items:center;
+  padding:17px 0;
+  border-bottom:1px solid #17314f;
+}
+
+.check{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  border:2px solid #315477;
+  display:grid;
+  place-items:center;
+  flex:none;
+  font-weight:900;
+}
+
+.done .check{
+  background:#2fd28b;
+  border-color:#2fd28b;
+  color:#06251a;
+}
+
+.done .taskname{
+  text-decoration:line-through;
+  color:#8193aa;
+}
+
+.taskname{
+  font-size:18px;
+  font-weight:800;
+}
+
+.meta{
+  color:#8ea1b8;
+  margin-top:4px;
+}
+
+.insight{
+  margin-top:22px;
+  padding:19px;
+  border:1px solid #245c91;
+  border-radius:18px;
+  background:#0a2340;
+}
+
+.insight b{
+  color:#58a6ff;
+}
+
+/* AI TUTOR */
+
+.tutor-header{
+  margin-bottom:18px;
+}
+
+.tutor-header h1{
+  font-size:38px;
+  margin:5px 0;
+}
+
+.ai-badge{
+  display:inline-flex;
+  align-items:center;
+  gap:7px;
+  padding:7px 11px;
+  border-radius:99px;
+  background:#102d4d;
+  border:1px solid #285a8a;
+  color:#65adff;
+  font-size:13px;
+  font-weight:800;
+}
+
+.tutor-controls{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  margin-bottom:18px;
+}
+
+.chat{
+  min-height:360px;
+  max-height:500px;
+  overflow-y:auto;
+  padding:5px 0;
+}
+
+.message{
+  display:flex;
+  margin:14px 0;
+}
+
+.message.ai{
+  justify-content:flex-start;
+}
+
+.message.user{
+  justify-content:flex-end;
+}
+
+.bubble{
+  max-width:82%;
+  padding:14px 16px;
+  border-radius:18px;
+  line-height:1.5;
+}
+
+.message.ai .bubble{
+  background:#102943;
+  border:1px solid #234d76;
+}
+
+.message.user .bubble{
+  background:linear-gradient(135deg,#3d8cff,#8154ef);
+}
+
+.sender{
+  font-size:12px;
+  font-weight:800;
+  margin-bottom:5px;
+  opacity:.75;
+}
+
+.quick-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  margin:15px 0;
+}
+
+.quick-actions button{
+  padding:9px 12px;
+  border-radius:10px;
+  border:1px solid #315477;
+  background:#0a1d35;
+  color:#b9cce2;
+}
+
+.chat-input{
+  display:flex;
+  gap:9px;
+  margin-top:15px;
+}
+
+.chat-input textarea{
+  min-height:54px;
+  height:54px;
+  resize:none;
+}
+
+.send{
+  width:58px;
+  border:0;
+  border-radius:13px;
+  background:linear-gradient(135deg,#3d8cff,#8b52ff);
+  color:white;
+  font-size:20px;
+  font-weight:900;
+}
+
+.typing{
+  color:#8ea1b8;
+  font-size:13px;
+  padding:5px;
+}
+
+.feature-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:10px;
+  margin-top:18px;
+}
+
+.feature{
+  padding:15px;
+  border-radius:15px;
+  background:#0a1d35;
+  border:1px solid #234d76;
+}
+
+.feature strong{
+  display:block;
+  margin-bottom:5px;
+}
+
+.feature span{
+  color:#8ea1b8;
+  font-size:13px;
+}
+
+/* MOBILE */
+
+@media(max-width:600px){
+  .subjects,
+  .tutor-controls,
+  .feature-grid{
+    grid-template-columns:1fr;
+  }
+
+  .card{
+    padding:20px;
+  }
+
+  .tutor-header h1{
+    font-size:32px;
+  }
+
+  .bubble{
+    max-width:90%;
+  }
+}
 </style>
 </head>
-<body><main class="wrap">
+
+<body>
+
+<main class="wrap">
+
+<!-- SETUP -->
 
 <section id="setup" class="card">
-<div class="brand">StudyAI ✦</div><div class="muted">Your personal AI study companion</div>
+
+<div class="brand">StudyAI ✦</div>
+<div class="muted">Your personal AI study companion</div>
+
 <h1>Let's build your study plan.</h1>
-<p class="muted">Choose your details once. Your dashboard will remember them on this device.</p>
-<label>Your name</label><input id="name" placeholder="e.g. Garima">
-<label>Class / grade</label><select id="grade"><option value="">Choose</option><option>9</option><option>10</option><option>11</option><option>12</option><option>College</option><option>Other</option></select>
+
+<p class="muted">
+Choose your details once. StudyAI will personalize your learning experience.
+</p>
+
+<label>Your name</label>
+<input id="name" placeholder="e.g. Garima">
+
+<label>Class / grade</label>
+
+<select id="grade">
+<option value="">Choose</option>
+<option>9</option>
+<option>10</option>
+<option>11</option>
+<option>12</option>
+<option>College</option>
+<option>Other</option>
+</select>
+
 <label>Choose subjects</label>
+
 <div class="subjects">
-<label class="subject"><input type="checkbox" value="Mathematics">Mathematics</label>
-<label class="subject"><input type="checkbox" value="Physics">Physics</label>
-<label class="subject"><input type="checkbox" value="Chemistry">Chemistry</label>
-<label class="subject"><input type="checkbox" value="Biology">Biology</label>
-<label class="subject"><input type="checkbox" value="Programming">Programming</label>
-<label class="subject"><input type="checkbox" value="English">English</label>
+
+<label class="subject">
+<input type="checkbox" value="Mathematics">
+Mathematics
+</label>
+
+<label class="subject">
+<input type="checkbox" value="Physics">
+Physics
+</label>
+
+<label class="subject">
+<input type="checkbox" value="Chemistry">
+Chemistry
+</label>
+
+<label class="subject">
+<input type="checkbox" value="Biology">
+Biology
+</label>
+
+<label class="subject">
+<input type="checkbox" value="Programming">
+Programming
+</label>
+
+<label class="subject">
+<input type="checkbox" value="English">
+English
+</label>
+
 </div>
-<label>Preparing for</label><select id="goal"><option>School</option><option>College</option><option>JEE</option><option>NEET</option><option>Other</option></select>
-<label>Daily study goal</label><select id="daily"><option value="60">1 hour</option><option value="120" selected>2 hours</option><option value="180">3 hours</option><option value="240">4 hours</option></select>
-<div id="error" class="error"></div><button class="primary" onclick="createProfile()">Create My Dashboard →</button>
+
+<label>Preparing for</label>
+
+<select id="goal">
+<option>School</option>
+<option>College</option>
+<option>JEE</option>
+<option>NEET</option>
+<option>Other</option>
+</select>
+
+<label>Daily study goal</label>
+
+<select id="daily">
+<option value="60">1 hour</option>
+<option value="120" selected>2 hours</option>
+<option value="180">3 hours</option>
+<option value="240">4 hours</option>
+</select>
+
+<div id="error" class="error"></div>
+
+<button class="primary" onclick="createProfile()">
+Create My StudyAI →
+</button>
+
 </section>
 
-<section id="dash" class="hidden">
-<div class="top"><div><div class="brand">StudyAI ✦</div><div class="muted">Your personal study dashboard</div></div><button class="reset" onclick="resetProfile()">Reset</button></div>
-<div class="card"><div class="top"><div><div class="muted">Study dashboard</div><h2 id="greet"></h2></div><strong id="pct">0% today</strong></div>
-<div class="progress"><i id="bar"></i></div><div id="tasks"></div>
-<div class="insight"><b>✦ AI insight</b><p id="insight"></p></div>
-</div></section>
+
+<!-- APP -->
+
+<section id="app" class="hidden">
+
+<div class="top">
+
+<div>
+<div class="brand">StudyAI ✦</div>
+<div class="muted">Your personal AI learning companion</div>
+</div>
+
+<button class="reset" onclick="resetProfile()">
+Reset
+</button>
+
+</div>
+
+
+<div class="nav">
+
+<button id="dashboardBtn" class="active" onclick="showPage('dashboard')">
+📊 Dashboard
+</button>
+
+<button id="tutorBtn" onclick="showPage('tutor')">
+🧠 AI Tutor
+</button>
+
+</div>
+
+
+<!-- DASHBOARD -->
+
+<div id="dashboardPage">
+
+<div class="card">
+
+<div class="top">
+
+<div>
+<div class="muted">Study dashboard</div>
+<h2 id="greet"></h2>
+</div>
+
+<strong id="pct">0% today</strong>
+
+</div>
+
+<div class="progress">
+<i id="bar"></i>
+</div>
+
+<div id="tasks"></div>
+
+<div class="insight">
+
+<b>✦ AI insight</b>
+
+<p id="insight"></p>
+
+</div>
+
+</div>
+
+</div>
+
+
+<!-- AI TUTOR -->
+
+<div id="tutorPage" class="hidden">
+
+<div class="card">
+
+<div class="tutor-header">
+
+<span class="ai-badge">✦ AI TUTOR</span>
+
+<h1>Learn anything, one question at a time.</h1>
+
+<p class="muted">
+Ask StudyAI to explain concepts, solve problems, create examples,
+or quiz you.
+</p>
+
+</div>
+
+
+<div class="tutor-controls">
+
+<div>
+
+<label>Subject</label>
+
+<select id="tutorSubject"></select>
+
+</div>
+
+<div>
+
+<label>Learning level</label>
+
+<select id="level">
+<option>Beginner</option>
+<option selected>School level</option>
+<option>Exam preparation</option>
+<option>Advanced</option>
+</select>
+
+</div>
+
+</div>
+
+
+<div id="chat" class="chat">
+
+<div class="message ai">
+
+<div class="bubble">
+
+<div class="sender">StudyAI Tutor</div>
+
+Hi! 👋 I'm your StudyAI tutor.
+
+<br><br>
+
+Ask me something like:
+
+<br><br>
+
+<strong>
+"Explain Newton's laws simply"
+</strong>
+
+<br>
+
+or
+
+<strong>
+"Quiz me on quadratic equations."
+</strong>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="quick-actions">
+
+<button onclick="quickAsk('Explain this topic simply')">
+✨ Explain simply
+</button>
+
+<button onclick="quickAsk('Give me an example')">
+📖 Give example
+</button>
+
+<button onclick="quickAsk('Quiz me on this topic')">
+🧠 Quiz me
+</button>
+
+<button onclick="quickAsk('Give me a practice problem')">
+✍️ Practice
+</button>
+
+</div>
+
+
+<div class="chat-input">
+
+<textarea
+id="question"
+placeholder="Ask your AI tutor anything..."
+onkeydown="handleEnter(event)"
+></textarea>
+
+<button class="send" onclick="sendQuestion()">
+➤
+</button>
+
+</div>
+
+
+<div class="feature-grid">
+
+<div class="feature">
+<strong>🧠 Explain</strong>
+<span>Understand difficult concepts step by step.</span>
+</div>
+
+<div class="feature">
+<strong>📝 Practice</strong>
+<span>Generate questions and practice problems.</span>
+</div>
+
+<div class="feature">
+<strong>🎯 Personalize</strong>
+<span>Learn according to your level and goals.</span>
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
 </main>
+
+
 <script>
+
 const KEY="studyAIProfile";
-const topics={Mathematics:"Functions & Equations",Physics:"Motion",Chemistry:"Chemical Bonding",Biology:"Human Biology",Programming:"Arrays & Logic",English:"Reading & Writing"};
-function profile(){return JSON.parse(localStorage.getItem(KEY)||"null")}
+
+const topics={
+Mathematics:"Functions & Equations",
+Physics:"Motion",
+Chemistry:"Chemical Bonding",
+Biology:"Human Biology",
+Programming:"Arrays & Logic",
+English:"Reading & Writing"
+};
+
+function profile(){
+  return JSON.parse(localStorage.getItem(KEY)||"null");
+}
+
+
 function createProfile(){
- const name=document.getElementById("name").value.trim(),grade=document.getElementById("grade").value;
- const subjects=[...document.querySelectorAll(".subject input:checked")].map(x=>x.value);
- if(!name||!grade||!subjects.length){document.getElementById("error").textContent="Please enter your name, class and at least one subject.";return}
- localStorage.setItem(KEY,JSON.stringify({name,grade,subjects,goal:document.getElementById("goal").value,daily:+document.getElementById("daily").value,done:[]}));
- render();
+
+  const name=document.getElementById("name").value.trim();
+
+  const grade=document.getElementById("grade").value;
+
+  const subjects=[
+    ...document.querySelectorAll(".subject input:checked")
+  ].map(x=>x.value);
+
+  if(!name || !grade || !subjects.length){
+
+    document.getElementById("error").textContent=
+      "Please enter your name, class and at least one subject.";
+
+    return;
+  }
+
+  localStorage.setItem(KEY,JSON.stringify({
+
+    name,
+    grade,
+    subjects,
+
+    goal:document.getElementById("goal").value,
+
+    daily:+document.getElementById("daily").value,
+
+    done:[]
+
+  }));
+
+  render();
+
 }
+
+
 function render(){
- const p=profile();if(!p)return;
- document.getElementById("setup").classList.add("hidden");document.getElementById("dash").classList.remove("hidden");
- document.getElementById("greet").textContent="Good morning, "+p.name+" 👋";
- const box=document.getElementById("tasks");box.innerHTML="";
- p.subjects.forEach((s,i)=>{const done=p.done.includes(i),d=document.createElement("div");d.className="task "+(done?"done":"");
- d.innerHTML='<div class="check" onclick="toggle('+i+')">'+(done?"✓":"")+'</div><div><div class="taskname">'+s+" — "+(topics[s]||"Study session")+'</div><div class="meta">'+(30+i*10)+' min · '+(done?"completed":i===0?"next priority":"planned")+"</div></div>";box.appendChild(d)});
- const n=p.subjects.length,done=p.done.length,pct=n?Math.round(done/n*100):0;document.getElementById("pct").textContent=pct+"% today";document.getElementById("bar").style.width=pct+"%";
- const next=p.subjects.find((s,i)=>!p.done.includes(i));document.getElementById("insight").textContent=next?"Your next priority is "+next+". Stay focused and finish one session at a time.":"Excellent — you completed all planned sessions!";
+
+  const p=profile();
+
+  if(!p)return;
+
+  document.getElementById("setup").classList.add("hidden");
+
+  document.getElementById("app").classList.remove("hidden");
+
+  document.getElementById("greet").textContent=
+    "Good morning, "+p.name+" 👋";
+
+  const box=document.getElementById("tasks");
+
+  box.innerHTML="";
+
+  p.subjects.forEach((s,i)=>{
+
+    const done=p.done.includes(i);
+
+    const d=document.createElement("div");
+
+    d.className="task "+(done?"done":"");
+
+    d.innerHTML=
+
+      '<div class="check" onclick="toggle('+i+')">'+
+      (done?"✓":"")+
+      '</div>'+
+
+      '<div>'+
+      '<div class="taskname">'+
+      s+" — "+(topics[s]||"Study session")+
+      '</div>'+
+
+      '<div class="meta">'+
+      (30+i*10)+
+      ' min · '+
+      (done?"completed":i===0?"next priority":"planned")+
+      '</div>'+
+
+      '</div>';
+
+    box.appendChild(d);
+
+  });
+
+  const n=p.subjects.length;
+
+  const done=p.done.length;
+
+  const pct=n?Math.round(done/n*100):0;
+
+  document.getElementById("pct").textContent=
+    pct+"% today";
+
+  document.getElementById("bar").style.width=
+    pct+"%";
+
+  const next=p.subjects.find(
+    (s,i)=>!p.done.includes(i)
+  );
+
+  document.getElementById("insight").textContent=
+
+    next
+
+    ? "Your next priority is "+next+
+      ". Stay focused and finish one session at a time."
+
+    : "Excellent — you completed all planned sessions!";
+
+  setupTutor();
+
 }
-function toggle(i){const p=profile();p.done=p.done.includes(i)?p.done.filter(x=>x!==i):[...p.done,i];localStorage.setItem(KEY,JSON.stringify(p));render()}
-function resetProfile(){if(confirm("Reset this device's StudyAI profile?")){localStorage.removeItem(KEY);location.reload()}}
+
+
+function toggle(i){
+
+  const p=profile();
+
+  p.done=p.done.includes(i)
+
+    ? p.done.filter(x=>x!==i)
+
+    : [...p.done,i];
+
+  localStorage.setItem(KEY,JSON.stringify(p));
+
+  render();
+
+}
+
+
+function setupTutor(){
+
+  const p=profile();
+
+  const select=document.getElementById("tutorSubject");
+
+  select.innerHTML="";
+
+  p.subjects.forEach(s=>{
+
+    const option=document.createElement("option");
+
+    option.value=s;
+
+    option.textContent=s;
+
+    select.appendChild(option);
+
+  });
+
+}
+
+
+function showPage(page){
+
+  const dashboard=document.getElementById("dashboardPage");
+
+  const tutor=document.getElementById("tutorPage");
+
+  const dashboardBtn=document.getElementById("dashboardBtn");
+
+  const tutorBtn=document.getElementById("tutorBtn");
+
+  if(page==="tutor"){
+
+    dashboard.classList.add("hidden");
+
+    tutor.classList.remove("hidden");
+
+    dashboardBtn.classList.remove("active");
+
+    tutorBtn.classList.add("active");
+
+  }else{
+
+    tutor.classList.add("hidden");
+
+    dashboard.classList.remove("hidden");
+
+    tutorBtn.classList.remove("active");
+
+    dashboardBtn.classList.add("active");
+
+  }
+
+}
+
+
+function addMessage(text,type){
+
+  const chat=document.getElementById("chat");
+
+  const message=document.createElement("div");
+
+  message.className="message "+type;
+
+  const bubble=document.createElement("div");
+
+  bubble.className="bubble";
+
+  bubble.innerHTML=
+
+    '<div class="sender">'+
+    (type==="ai"?"StudyAI Tutor":"You")+
+    '</div>'+
+    text;
+
+  message.appendChild(bubble);
+
+  chat.appendChild(message);
+
+  chat.scrollTop=chat.scrollHeight;
+
+}
+
+
+function sendQuestion(){
+
+  const input=document.getElementById("question");
+
+  const question=input.value.trim();
+
+  if(!question)return;
+
+  const subject=document.getElementById("tutorSubject").value;
+
+  const level=document.getElementById("level").value;
+
+  addMessage(question,"user");
+
+  input.value="";
+
+  setTimeout(()=>{
+
+    let answer=
+
+      "Great question! You're studying <strong>"+
+      subject+
+      "</strong> at the <strong>"+
+      level+
+      "</strong> level.<br><br>"+
+
+      "The real StudyAI tutor will give you a personalized, "+
+      "step-by-step explanation here. "+
+      "We're now ready to connect this interface to the AI engine.";
+
+    addMessage(answer,"ai");
+
+  },600);
+
+}
+
+
+function quickAsk(text){
+
+  document.getElementById("question").value=text;
+
+  sendQuestion();
+
+}
+
+
+function handleEnter(event){
+
+  if(event.key==="Enter" && !event.shiftKey){
+
+    event.preventDefault();
+
+    sendQuestion();
+
+  }
+
+}
+
+
+function resetProfile(){
+
+  if(confirm("Reset this device's StudyAI profile?")){
+
+    localStorage.removeItem(KEY);
+
+    location.reload();
+
+  }
+
+}
+
+
 if(profile())render();
-</script></body></html>
+
+</script>
+
+</body>
+</html>
