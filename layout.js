@@ -1,6 +1,8 @@
+import "./globals.css";
+
 export const metadata = {
-  title: "StudyAI",
-  description: "Your personal AI study tutor",
+  title: "StudyAI — Your AI Study Companion",
+  description: "Personalized study plans, quizzes, explanations and exam preparation."
 };
 
 export default function RootLayout({ children }) {
