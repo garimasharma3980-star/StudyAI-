@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>StudyAI — Personalized Dashboard</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#06172f;color:#fff;font-family:system-ui,-apple-system,Segoe UI,sans-serif}
+.wrap{max-width:900px;margin:auto;padding:22px 16px 45px}.card{background:linear-gradient(145deg,#0d203b,#091a31);border:1px solid #245082;border-radius:25px;padding:25px;box-shadow:0 18px 45px #0004}
+.brand{font-size:28px;font-weight:800}.muted{color:#98aac0}h1{font-size:clamp(34px,8vw,55px);line-height:1.05;margin:12px 0}h2{margin:8px 0}
+label{display:block;font-weight:700;margin:17px 0 8px}input,select{width:100%;padding:14px;border-radius:12px;border:1px solid #385777;background:#081a31;color:#fff;font-size:16px}
+.subjects{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}.subject{border:1px solid #315477;border-radius:12px;padding:13px;background:#0a1d35}.subject input{width:auto;margin-right:8px}
+button{cursor:pointer}.primary{width:100%;margin-top:22px;padding:15px;border:0;border-radius:13px;background:linear-gradient(90deg,#3d8cff,#8b52ff);color:white;font-weight:800;font-size:16px}
+.top{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.reset{background:transparent;color:#a9c4e5;border:1px solid #315477;border-radius:10px;padding:9px 12px}
+.progress{height:13px;background:#172d48;border-radius:99px;overflow:hidden;margin:18px 0}.progress i{display:block;height:100%;width:0;background:linear-gradient(90deg,#3d8cff,#9a50ff)}
+.task{display:flex;gap:14px;align-items:center;padding:17px 0;border-bottom:1px solid #17314f}.check{width:42px;height:42px;border-radius:50%;border:2px solid #315477;display:grid;place-items:center;flex:none;font-weight:900}.done .check{background:#2fd28b;border-color:#2fd28b;color:#06251a}.done .taskname{text-decoration:line-through;color:#8193aa}.taskname{font-size:18px;font-weight:800}.meta{color:#8ea1b8;margin-top:4px}.insight{margin-top:22px;padding:19px;border:1px solid #245c91;border-radius:18px;background:#0a2340}.insight b{color:#58a6ff}.hidden{display:none}.error{color:#ff9c9c;margin-top:10px}
+@media(max-width:520px){.subjects{grid-template-columns:1fr}.card{padding:20px}}
+</style>
+</head>
+<body><main class="wrap">
+
+<section id="setup" class="card">
+<div class="brand">StudyAI ✦</div><div class="muted">Your personal AI study companion</div>
+<h1>Let's build your study plan.</h1>
+<p class="muted">Choose your details once. Your dashboard will remember them on this device.</p>
+<label>Your name</label><input id="name" placeholder="e.g. Garima">
+<label>Class / grade</label><select id="grade"><option value="">Choose</option><option>9</option><option>10</option><option>11</option><option>12</option><option>College</option><option>Other</option></select>
+<label>Choose subjects</label>
+<div class="subjects">
+<label class="subject"><input type="checkbox" value="Mathematics">Mathematics</label>
+<label class="subject"><input type="checkbox" value="Physics">Physics</label>
+<label class="subject"><input type="checkbox" value="Chemistry">Chemistry</label>
+<label class="subject"><input type="checkbox" value="Biology">Biology</label>
+<label class="subject"><input type="checkbox" value="Programming">Programming</label>
+<label class="subject"><input type="checkbox" value="English">English</label>
+</div>
+<label>Preparing for</label><select id="goal"><option>School</option><option>College</option><option>JEE</option><option>NEET</option><option>Other</option></select>
+<label>Daily study goal</label><select id="daily"><option value="60">1 hour</option><option value="120" selected>2 hours</option><option value="180">3 hours</option><option value="240">4 hours</option></select>
+<div id="error" class="error"></div><button class="primary" onclick="createProfile()">Create My Dashboard →</button>
+</section>
+
+<section id="dash" class="hidden">
+<div class="top"><div><div class="brand">StudyAI ✦</div><div class="muted">Your personal study dashboard</div></div><button class="reset" onclick="resetProfile()">Reset</button></div>
+<div class="card"><div class="top"><div><div class="muted">Study dashboard</div><h2 id="greet"></h2></div><strong id="pct">0% today</strong></div>
+<div class="progress"><i id="bar"></i></div><div class="muted" style="margin:-8px 0 4px;font-size:13px">Tap a circle when you finish a study session.</div><div id="tasks"></div>
+<div class="insight"><b>✦ AI insight</b><p id="insight"></p></div>
+</div></section>
+</main>
+<script>
+const KEY="studyAIProfile";
+const topics={Mathematics:"Functions & Equations",Physics:"Motion",Chemistry:"Chemical Bonding",Biology:"Human Biology",Programming:"Arrays & Logic",English:"Reading & Writing"};
+function profile(){return JSON.parse(localStorage.getItem(KEY)||"null")}
+function createProfile(){
+ const name=document.getElementById("name").value.trim(),grade=document.getElementById("grade").value;
+ const subjects=[...document.querySelectorAll(".subject input:checked")].map(x=>x.value);
+ if(!name||!grade||!subjects.length){document.getElementById("error").textContent="Please enter your name, class and at least one subject.";return}
+ localStorage.setItem(KEY,JSON.stringify({name,grade,subjects,goal:document.getElementById("goal").value,daily:+document.getElementById("daily").value,done:[]}));
+ render();
+}
+function render(){
+ const p=profile();if(!p)return;
+ document.getElementById("setup").classList.add("hidden");document.getElementById("dash").classList.remove("hidden");
+ document.getElementById("greet").textContent="Good morning, "+p.name+" 👋";
+ const box=document.getElementById("tasks");box.innerHTML="";
+ p.subjects.forEach((s,i)=>{const done=p.done.includes(i),d=document.createElement("div");d.className="task "+(done?"done":"");
+ d.innerHTML='<div class="check" onclick="toggle('+i+')">'+(done?"✓":"")+'</div><div><div class="taskname">'+s+" — "+(topics[s]||"Study session")+'</div><div class="meta">'+(30+i*10)+' min · '+(done?"completed":i===0?"next priority":"planned")+"</div></div>";box.appendChild(d)});
+ const n=p.subjects.length,done=p.done.length,pct=n?Math.round(done/n*100):0;document.getElementById("pct").textContent=pct+"% today";document.getElementById("bar").style.width=pct+"%";
+ const next=p.subjects.find((s,i)=>!p.done.includes(i));document.getElementById("insight").textContent=next?"Your next priority is "+next+". Stay focused and finish one session at a time.":"Excellent — you completed all planned sessions!";
+}
+function toggle(i){const p=profile();p.done=p.done.includes(i)?p.done.filter(x=>x!==i):[...p.done,i];localStorage.setItem(KEY,JSON.stringify(p));render()}
+function resetProfile(){if(confirm("Reset this device's StudyAI profile?")){localStorage.removeItem(KEY);location.reload()}}
+
+function todayKey(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+function getTodayDone(p){
+  if(p.doneDate!==todayKey()){
+    p.doneDate=todayKey();
+    p.done=[];
+    localStorage.setItem(KEY,JSON.stringify(p));
+  }
+  return p.done||[];
+}
+function render(){
+  const p=profile();if(!p)return;
+  const doneList=getTodayDone(p);
+  document.getElementById("setup").classList.add("hidden");
+  document.getElementById("dash").classList.remove("hidden");
+  document.getElementById("greet").textContent="Good morning, "+p.name+" 👋";
+  const box=document.getElementById("tasks");box.innerHTML="";
+  p.subjects.forEach((s,i)=>{
+    const done=doneList.includes(i),d=document.createElement("div");
+    d.className="task "+(done?"done":"");
+    d.innerHTML='<div class="check" onclick="toggle('+i+')">'+(done?"✓":"")+'</div><div><div class="taskname">'+s+" — "+(topics[s]||"Study session")+'</div><div class="meta">'+(30+i*10)+' min · '+(done?"completed":i===0?"next priority":"planned")+"</div></div>";
+    box.appendChild(d);
+  });
+  const n=p.subjects.length,done=doneList.length,pct=n?Math.round(done/n*100):0;
+  document.getElementById("pct").textContent=pct+"% today";
+  document.getElementById("bar").style.width=pct+"%";
+  const next=p.subjects.find((s,i)=>!doneList.includes(i));
+  document.getElementById("insight").textContent=next?"Your next priority is "+next+". Stay focused and finish one session at a time.":"Excellent — you completed all planned sessions!";
+}
+function toggle(i){
+  const p=profile();if(!p)return;
+  const done=getTodayDone(p);
+  p.done=done.includes(i)?done.filter(x=>x!==i):[...done,i];
+  localStorage.setItem(KEY,JSON.stringify(p));
+  render();
+}
+
+if(profile())render();
+</script></body></html>
